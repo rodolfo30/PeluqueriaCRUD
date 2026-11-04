@@ -18,13 +18,11 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -53,7 +51,6 @@ import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,7 +63,10 @@ fun EditDeleteCitasScreen(navController: NavController, id: Int) {
         navController.popBackStack()
         return
     }
+
     var showDialog by remember { mutableStateOf(false) }
+    val orangeColor = Color(0xFFFF9100)
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -75,7 +75,7 @@ fun EditDeleteCitasScreen(navController: NavController, id: Int) {
                         text = "EDITAR / BORRAR CITA",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFFFF9100)
+                        color = orangeColor
                     )
                 },
                 navigationIcon = {
@@ -83,7 +83,7 @@ fun EditDeleteCitasScreen(navController: NavController, id: Int) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Volver atrás",
-                            tint = Color(0xFFFF9100)
+                            tint = orangeColor
                         )
                     }
                 }
@@ -97,11 +97,9 @@ fun EditDeleteCitasScreen(navController: NavController, id: Int) {
                 actions = {},
                 floatingActionButton = {
                     FloatingActionButton(
-                        onClick = {
-                            showDialog = true
-                        },
-                        containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
+                        onClick = { showDialog = true },
+                        containerColor = orangeColor,
+                        contentColor = Color.Black
                     ) {
                         Icon(Icons.Filled.Delete, contentDescription = "Borrar cita")
                     }
@@ -122,28 +120,37 @@ fun EditDeleteCitasScreen(navController: NavController, id: Int) {
             icon = {
                 Icon(
                     imageVector = Icons.Filled.Delete,
-                    contentDescription = "Confirmar borrado"
+                    contentDescription = "Confirmar borrado",
+                    tint = orangeColor
                 )
             },
-            title = { Text(text = "Confirmar borrado") },
-            text = { Text(text = "Estas seguro que quieres borrar la cita de: ${cita.nombre}?") },
-            onDismissRequest = {
-                showDialog = false
+            title = {
+                Text(
+                    text = "Confirmar borrado",
+                    fontWeight = FontWeight.Bold
+                )
             },
+            text = {
+                Text(text = "¿Estás seguro de que quieres borrar la cita de ${cita.nombre}?")
+            },
+            onDismissRequest = { showDialog = false },
             confirmButton = {
-                TextButton(onClick = {
-                    listaCitas.remove(cita)
-                    Toast.makeText(context, "Cita eliminada", Toast.LENGTH_LONG).show()
-                    navController.popBackStack()
-                }) {
-                    Text(text = "Borrar")
+                Button(
+                    onClick = {
+                        listaCitas.remove(cita)
+                        Toast.makeText(context, "Cita eliminada", Toast.LENGTH_LONG).show()
+                        navController.popBackStack()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text(text = "Borrar", color = Color.White)
                 }
             },
             dismissButton = {
-                TextButton(onClick = {
-                    showDialog = false
-                }) {
-                    Text(text = "Cancelar")
+                TextButton(onClick = { showDialog = false }) {
+                    Text(text = "Cancelar", color = MaterialTheme.colorScheme.onSurface)
                 }
             }
         )
@@ -160,7 +167,7 @@ fun EditDeleteBodyContent(
     var nombre by remember { mutableStateOf(cita.nombre) }
     var descripcion by remember { mutableStateOf(cita.descripcion) }
 
-    // fechas
+    // Fechas
     var fechaState by remember { mutableStateOf(cita.fecha) }
     var horaState by remember { mutableStateOf(cita.hora) }
 
